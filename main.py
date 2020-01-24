@@ -1,5 +1,5 @@
 from plot_inputs import plot_inputs
-from rbf.G_functions import G_matrix_exponential
+from rbf.G_functions import G_matrix_exponential, covariance
 import csv
 
 '''
@@ -29,4 +29,4 @@ def read_data(filename):
 
 
 read_data(FILENAME)
-print(G_matrix_exponential([1, 2, 3], [1, 2], [2, 2], .1))
+

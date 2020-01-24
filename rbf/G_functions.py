@@ -16,5 +16,10 @@ def covariance(U_vector,X_vector,V_vector, m):
     C = []
     for i in range(len(V_vector)):
         c_i = 0
-        for j in range(X_vector):
+        uki = 0
+        for j in range(len(X_vector)):
+            uki += U_vector[j][i]
+        for j in range(len(X_vector)):
             c_i += np.power(U_vector[j][i], m)*np.power(X_vector[j] - V_vector[i], 2)
+        C.append(c_i)
+    return C
