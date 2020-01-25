@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 
 
-def fcm(data,Y, classes_count=2, n_clusters=1, landa=.1, n_init=30, m=2, max_iter=300, tol=1e-16):
+def fcm(data,data_train,Y_train,data_test,Y_test, classes_count=2, n_clusters=1, landa=.1, n_init=30, m=2, max_iter=300, tol=1e-16):
     um = None
     min_cost = np.inf
     for iter_init in range(n_init):
@@ -42,33 +42,29 @@ def fcm(data,Y, classes_count=2, n_clusters=1, landa=.1, n_init=30, m=2, max_ite
             mem = um.argmax(axis=0)
     plt.plot(data[:, 0], data[:, 1], 'go', min_centers[:, 0], min_centers[:, 1], 'bs')
     plt.show()
-    C = []
     C = calculate_covariance_mat(data,min_centers,um,m)
-    # for i in range(len(min_centers)):
-    #     C_numerator = 0
-    #     C_denominator = 0
-    #     for j in range(len(data)):
-    #         C_numerator += (um[i][j] ** m)
-    #     for j in range(len(data)):
-    #
-    #         C_denominator += ((um[i][j] ** m) * np.matmul(np.transpose(np.array(data[j]) - np.array(min_centers[i])),
-    #                                                       np.array(np.array(data[j]) - np.array(min_centers[i]))))
-    #     C.append(C_numerator / C_denominator)
-    G = np.zeros([len(data), len(min_centers)])
-
-    for k in range(len(data)):
+    G = np.zeros([len(data_train), len(min_centers)])
+    for k in range(len(data_train)):
         for i in range(len(min_centers)):
             G[k][i] += np.exp(-landa * np.matmul(
-                np.matmul(np.transpose(np.array(data[k]) - np.array(min_centers[i])), np.linalg.inv(C[i])),
-                np.array(np.array(data[k]) - np.array(min_centers[i]))))
+                np.matmul(np.transpose(np.array(data_train[k]) - np.array(min_centers[i])), np.linalg.inv(C[i])),
+                np.array(np.array(data_train[k]) - np.array(min_centers[i]))))
     try:
-        V = np.matmul(np.transpose(G),G)
-        # print(V)
-        W = np.matmul(np.matmul(np.linalg.inv(np.matmul(np.transpose(G),G)),np.transpose(G)),generate_Y(len(data),Y,classes_count))
+        W = np.matmul(np.matmul(np.linalg.inv(np.matmul(np.transpose(G),G)),np.transpose(G)),generate_Y(len(data_train),Y_train,classes_count))
     except np.linalg.LinAlgError:
-        W = np.matmul(np.matmul(np.random.rand([len(min_centers),len(min_centers)]), np.transpose(G)), generate_Y(len(data), Y,classes_count))
+        W = np.matmul(np.matmul(np.random.rand([len(min_centers),len(min_centers)]), np.transpose(G)), generate_Y(len(data_train), Y_train,classes_count))
+    y_hat = np.argmax(np.matmul(G, W), axis=1)
+    acc = accuracy(Y_train, y_hat, len(data))
+    print("train data accuracy: " , acc)
+    G = np.zeros([len(data_test), len(min_centers)])
+    for k in range(len(data_test)):
+        for i in range(len(min_centers)):
+            G[k][i] += np.exp(-landa * np.matmul(
+                np.matmul(np.transpose(np.array(data_test[k]) - np.array(min_centers[i])), np.linalg.inv(C[i])),
+                np.array(np.array(data_test[k]) - np.array(min_centers[i]))))
     y_hat = np.argmax(np.matmul(G,W), axis=1)
-    print(W)
+    acc = accuracy(Y_test,y_hat,len(data))
+    print("test data accuracy: " , acc)
     return min_centers
 
 def generate_Y(x_d, y_vector, classes_count):
@@ -95,3 +91,6 @@ def calculate_covariance_mat(data, centers, U, m):
             divisor_sum += np.power(U[i][k], m)
         C.append(divided_sum/ divisor_sum)
     return C
+
+def accuracy(y, y_hat, n):
+    return 1 - (np.sum(np.abs(np.sign(np.subtract(y, y_hat)))) / n)

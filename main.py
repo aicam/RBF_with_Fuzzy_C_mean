@@ -3,7 +3,7 @@ from rbf.G_functions import G_matrix_exponential, covariance
 from rbf.train import trainRBF,np
 from FCM import fcm
 import csv
-
+import random
 '''
     Initial attributes
 '''
@@ -29,8 +29,18 @@ def read_data(filename):
                 Y.append(0 if float(row[2]) == 1.0 else 1)
     csv_file.close()
 
-
+INPUT = np.array(INPUT)
+Y = np.array(Y)
+indices = np.arange(INPUT.shape[0])
+np.random.shuffle(indices)
+INPUT = INPUT[indices]
+Y = INPUT[indices]
+INPUT = np.ndarray.tolist(INPUT)
+Y = np.ndarray.tolist(Y)
 read_data(FILENAME)
-print(INPUT[0])
-fcm(np.array(INPUT),Y,2,M)
+x_train = INPUT[0:840]
+x_test = INPUT[841:1200]
+y_train = Y[0:840]
+y_test = Y[841:1200]
+fcm(np.array(INPUT),x_train,y_train,x_test,y_test,2,M)
 # trainRBF(INPUT,Y,.1,fcm(np.array(INPUT),M),2,M)
