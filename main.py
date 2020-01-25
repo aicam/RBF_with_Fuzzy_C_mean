@@ -1,5 +1,7 @@
 from plot_inputs import plot_inputs
 from rbf.G_functions import G_matrix_exponential, covariance
+from rbf.train import trainRBF,np
+from FCM import fcm
 import csv
 
 '''
@@ -29,4 +31,6 @@ def read_data(filename):
 
 
 read_data(FILENAME)
-
+print(INPUT[0])
+fcm(np.array(INPUT),M)
+# trainRBF(INPUT,Y,.1,fcm(np.array(INPUT),M),2,M)

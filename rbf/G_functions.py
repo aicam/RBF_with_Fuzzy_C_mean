@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.spatial import distance
 
 '''
     G is the map of data into new groups with different axis
@@ -14,6 +15,11 @@ def G_matrix_exponential(X_vector, V_vector, C_vector, landa):
 
 def covariance(U_vector,X_vector,V_vector, m):
     C = []
+    U_vector = []
+    for x in X_vector:
+        for v in V_vector:
+            U_vector.append(distance.euclidean(X_vector,v))
+    U_vector = np.array(U_vector).reshape([len()])
     for i in range(len(V_vector)):
         c_i = 0
         uki = 0
