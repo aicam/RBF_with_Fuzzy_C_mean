@@ -3,7 +3,9 @@ from scipy.spatial.distance import cdist
 import matplotlib.pyplot as plt
 
 
-def fcm(data,Y, n_clusters=1, landa=.1, n_init=30, m=2, max_iter=300, tol=1e-16):
+
+
+def fcm(data,Y, classes_count=2, n_clusters=1, landa=.1, n_init=30, m=2, max_iter=300, tol=1e-16):
     um = None
     min_cost = np.inf
     for iter_init in range(n_init):
@@ -55,24 +57,24 @@ def fcm(data,Y, n_clusters=1, landa=.1, n_init=30, m=2, max_iter=300, tol=1e-16)
 
     for k in range(len(data)):
         for i in range(len(min_centers)):
-            print(-landa * np.matmul(
-                np.matmul(np.transpose(np.array(data[k]) - np.array(min_centers[i])), generate_C_inverse(data[k], min_centers[i])),
-                np.array(np.array(data[k]) - np.array(min_centers[i]))))
             G[k][i] += np.exp(-landa * np.matmul(
                 np.matmul(np.transpose(np.array(data[k]) - np.array(min_centers[i])), generate_C_inverse(data[k], min_centers[i])),
                 np.array(np.array(data[k]) - np.array(min_centers[i]))))
-    # print(G.shape)
     try:
-        np.matmul(np.linalg.inv(np.matmul(np.transpose(G),G)),
-                  np.matmul(np.transpose(G), generate_Y(len(data[0]),)))
-    y_hat = np.argmax(np.matmul(G,))
+        V = np.matmul(np.transpose(G),G)
+        print(V)
+        W = np.matmul(np.matmul(np.linalg.inv(np.matmul(np.transpose(G),G)),np.transpose(G)),generate_Y(len(data),Y,classes_count))
+    except np.linalg.LinAlgError:
+        W = np.matmul(np.matmul(np.random.rand([len(min_centers),len(min_centers)]), np.transpose(G)), generate_Y(len(data), Y,classes_count))
+    y_hat = np.argmax(np.matmul(G,W), axis=1)
+    # print(W)
     return min_centers
 
-def generate_Y(x_d, y, classes_count):
+def generate_Y(x_d, y_vector, classes_count):
     Y = []
     for i in range(x_d):
         y_i = [0 for i in range(classes_count)]
-        y_i[y] = 1
+        y_i[y_vector[i]] = 1
         Y.append(y_i)
     return np.array(Y).reshape([x_d, classes_count])
 

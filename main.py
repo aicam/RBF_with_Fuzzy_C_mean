@@ -32,5 +32,5 @@ def read_data(filename):
 
 read_data(FILENAME)
 print(INPUT[0])
-fcm(np.array(INPUT),M)
+fcm(np.array(INPUT),Y,2,M)
 # trainRBF(INPUT,Y,.1,fcm(np.array(INPUT),M),2,M)
