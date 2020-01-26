@@ -73,6 +73,7 @@ def fcm(data,data_train,Y_train,data_test,Y_test, classes_count=2, n_clusters=1,
             g2_y.append(data_test[i][1])
     plt.plot(data[:,0],data[:,1],'go',g1_x,g1_y,'b^',g2_x,g2_y,'ro')
     plt.show()
+
     acc = accuracy(Y_test,y_hat,len(data))
     print("test data accuracy: " , acc)
     return min_centers
