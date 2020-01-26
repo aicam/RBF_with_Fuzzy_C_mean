@@ -63,6 +63,16 @@ def fcm(data,data_train,Y_train,data_test,Y_test, classes_count=2, n_clusters=1,
                 np.matmul(np.transpose(np.array(data_test[k]) - np.array(min_centers[i])), np.linalg.inv(C[i])),
                 np.array(np.array(data_test[k]) - np.array(min_centers[i]))))
     y_hat = np.argmax(np.matmul(G,W), axis=1)
+    g1_x,g1_y,g2_x,g2_y = [],[],[],[]
+    for i in range(len(y_hat)):
+        if y_hat[i] == Y_test[i]:
+            g1_x.append(data_test[i][0])
+            g1_y.append(data_test[i][1])
+        else:
+            g2_x.append(data_test[i][0])
+            g2_y.append(data_test[i][1])
+    plt.plot(data[:,0],data[:,1],'go',g1_x,g1_y,'b^',g2_x,g2_y,'ro')
+    plt.show()
     acc = accuracy(Y_test,y_hat,len(data))
     print("test data accuracy: " , acc)
     return min_centers

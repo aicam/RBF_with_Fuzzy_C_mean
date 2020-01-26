@@ -9,8 +9,8 @@ import random
 '''
 
 FILENAME = 'data/1.csv'
-M = 5
-RADUIS = .1
+M = 4
+RADUIS = .8
 '''
     Start with plotting inputs
 '''
@@ -29,15 +29,10 @@ def read_data(filename):
                 Y.append(0 if float(row[2]) == 1.0 else 1)
     csv_file.close()
 
-INPUT = np.array(INPUT)
-Y = np.array(Y)
-indices = np.arange(INPUT.shape[0])
-np.random.shuffle(indices)
-INPUT = INPUT[indices]
-Y = INPUT[indices]
-INPUT = np.ndarray.tolist(INPUT)
-Y = np.ndarray.tolist(Y)
 read_data(FILENAME)
+z = list(zip(np.array(INPUT),np.array(Y)))
+random.shuffle(z)
+INPUT, Y = zip(*z)
 x_train = INPUT[0:840]
 x_test = INPUT[841:1200]
 y_train = Y[0:840]
